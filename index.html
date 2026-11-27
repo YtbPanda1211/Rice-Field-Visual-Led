@@ -196,6 +196,20 @@ input[type=range].big-speed{height:34px}
 .mix-controls .field{margin:0}
 .mix-footer{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px;position:sticky;bottom:-24px;background:var(--glass);backdrop-filter:blur(16px);padding:14px 0 4px}
 .mix-footer .count{font-weight:800;color:var(--accent2)}
+
+/* ===== EXPORT DIALOG ===== */
+.export-box{width:min(680px,100%);max-height:92vh;overflow:auto;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:24px;padding:24px;box-shadow:var(--shadow);color:var(--text)}
+.export-box h3{margin:0 0 4px;font-size:22px}
+.export-box .sub{color:var(--muted);font-size:13.5px;margin-bottom:16px;line-height:1.55}
+.mode-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.mode-card{border:2px solid var(--border);border-radius:16px;padding:13px 15px;cursor:pointer;background:var(--card);transition:.2s}
+.mode-card.active{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(77,227,255,.22)}
+.mode-card b{display:block;font-size:14.5px;margin-bottom:3px}
+.mode-card span{font-size:12.5px;color:var(--muted);line-height:1.5;display:block}
+.detect-box{background:var(--card);border:1px dashed var(--border);border-radius:14px;padding:12px 15px;font-size:13px;line-height:1.7;color:var(--muted);margin-bottom:16px}
+.detect-box b{color:var(--text)}
+.summary-box{background:linear-gradient(135deg,rgba(109,92,255,.16),rgba(77,227,255,.12));border:1px solid var(--border);border-radius:14px;padding:13px 15px;font-size:13.5px;line-height:1.65;margin-top:14px}
+select:disabled,input:disabled{opacity:.45;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -284,6 +298,7 @@ input[type=range].big-speed{height:34px}
             <select id="fRes">
               <option value="1280x720">HD 1280×720</option>
               <option value="1920x1080">Full HD 1920×1080</option>
+              <option value="2560x1440">2K QHD 2560×1440</option>
               <option value="3840x2160">4K UHD 3840×2160</option>
               <option value="7680x4320" selected>★ 8K UHD 7680×4320</option>
             </select>
@@ -373,6 +388,62 @@ input[type=range].big-speed{height:34px}
       <button class="btn" id="createMixBtn">🎬 Tạo bản Mix</button>
       <button class="btn ghost" id="mixCloseBtn">Huỷ</button>
       <span style="color:var(--muted);font-size:12.5px">Bản mix sẽ được lưu vào Thư viện — xem trước &amp; tải Video/PNG như visual thường.</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- EXPORT / DOWNLOAD DIALOG -->
+<div class="modal" id="exportModal">
+  <div class="export-box">
+    <h3>⬇ Tải Video — <span id="expItemName">Visual</span></h3>
+    <div class="sub">Chọn chất lượng &amp; tốc độ trước khi xuất, hoặc để hệ thống tự kiểm tra thiết bị và đề xuất cấu hình phù hợp nhất.</div>
+
+    <div class="mode-row">
+      <div class="mode-card active" id="modeAuto"><b>🤖 Tự động (khuyên dùng)</b><span>Hệ thống kiểm tra CPU, RAM, GPU &amp; trình duyệt để chọn chất lượng phù hợp nhất với thiết bị này.</span></div>
+      <div class="mode-card" id="modeManual"><b>🎛 Tự chọn</b><span>Bạn tự chọn độ phân giải, FPS và tốc độ visual theo ý muốn.</span></div>
+    </div>
+
+    <div class="detect-box" id="detectBox">Đang kiểm tra thiết bị...</div>
+
+    <div class="quality-grid">
+      <div class="field" style="margin:0"><label>Độ phân giải</label>
+        <select id="expRes">
+          <option value="1280x720">HD — 1280×720</option>
+          <option value="1920x1080">Full HD — 1920×1080</option>
+          <option value="2560x1440">2K QHD — 2560×1440</option>
+          <option value="3840x2160">4K UHD — 3840×2160</option>
+          <option value="7680x4320">8K UHD — 7680×4320</option>
+        </select>
+      </div>
+      <div class="field" style="margin:0"><label>Tốc độ khung hình</label>
+        <select id="expFps">
+          <option value="30">30 FPS</option>
+          <option value="60">60 FPS</option>
+          <option value="120">120 FPS</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:18px">
+      <label>⏩ Tốc độ visual trong video tải về <output id="oExpSpeed">1.00×</output></label>
+      <input type="range" class="big-speed" id="expSpeed" min="0.05" max="5" step="0.05" value="1">
+      <div class="speed-presets" id="expSpeedPresets" style="--x:1">
+        <button data-v="0.25" type="button" style="background:var(--card2);color:var(--text);border:1px solid var(--border);padding:5px 10px;border-radius:99px;font-size:12px;font-weight:700">0.25× Chậm</button>
+        <button data-v="0.5" type="button" style="background:var(--card2);color:var(--text);border:1px solid var(--border);padding:5px 10px;border-radius:99px;font-size:12px;font-weight:700">0.5×</button>
+        <button data-v="1" type="button" style="background:var(--card2);color:var(--text);border:1px solid var(--border);padding:5px 10px;border-radius:99px;font-size:12px;font-weight:700">1× Chuẩn</button>
+        <button data-v="2" type="button" style="background:var(--card2);color:var(--text);border:1px solid var(--border);padding:5px 10px;border-radius:99px;font-size:12px;font-weight:700">2× Nhanh</button>
+        <button data-v="3.5" type="button" style="background:var(--card2);color:var(--text);border:1px solid var(--border);padding:5px 10px;border-radius:99px;font-size:12px;font-weight:700">3.5×</button>
+        <button data-v="5" type="button" style="background:var(--card2);color:var(--text);border:1px solid var(--border);padding:5px 10px;border-radius:99px;font-size:12px;font-weight:700">5× Siêu nhanh</button>
+      </div>
+      <div class="hint">Tốc độ này chỉ áp dụng cho file video tải về — không thay đổi visual gốc đã lưu. VD: chọn 2× thì trong video visual sẽ chạy nhanh gấp đôi.</div>
+    </div>
+
+    <div class="summary-box" id="expSummary"></div>
+
+    <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+      <button class="btn" id="startExportBtn" style="flex:1;justify-content:center">🎬 Bắt đầu tải video</button>
+      <button class="btn ghost" id="exportCloseBtn">Huỷ</button>
     </div>
   </div>
 </div>
@@ -949,7 +1020,11 @@ function setModalSpeed(v){
 $("#modalSpeed").addEventListener("input", e=> setModalSpeed(e.target.value));
 document.querySelectorAll("#modalSpeedPresets button").forEach(b=> b.onclick=()=> setModalSpeed(b.dataset.v));
 $("#modalPngBtn").onclick = ()=> modalItem && downloadPNG(modalItem);
-$("#modalVideoBtn").onclick = e=> modalItem && downloadVideo(modalItem, e.target, $("#modalProgress"));
+$("#modalVideoBtn").onclick = e=>{
+  if(!modalItem) return;
+  const mul = liveCanvases.get($("#modalCanvas"))?.speedMul || 1;
+  downloadVideo({...modalItem, speed:(modalItem.speed||1)*mul}, e.target, $("#modalProgress"));
+};
 
 /* ================= MIX PICKER ================= */
 let mixSelection = []; // array of item ids, theo thứ tự tick
@@ -1038,7 +1113,121 @@ function downloadPNG(item){
   toast("🖼 Đã tải ảnh PNG "+q.w+"×"+q.h+" — "+item.name);
 }
 
-async function downloadVideo(item, btn, progressBox){
+/* ===== Hộp thoại chọn chất lượng & tốc độ trước khi tải ===== */
+let pendingExport = null; // {item, btn, progressBox}
+let detectedProfile = null;
+
+function detectDevice(){
+  const cores = navigator.hardwareConcurrency || 0;
+  const mem = navigator.deviceMemory || 0; // GB gần đúng (chỉ Chrome/Edge có)
+  const isMobile = /Android|iPhone|iPad|Mobi/i.test(navigator.userAgent);
+  let gpu = "";
+  try{
+    const gl = document.createElement("canvas").getContext("webgl");
+    const ext = gl && gl.getExtension("WEBGL_debug_renderer_info");
+    if(gl) gpu = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+  }catch(e){}
+  const highGPU = /RTX\s?[2345]|RX\s?[67]\d{3}|Radeon\s?RX|Apple M[1-9]|GeForce RTX|Arc A/i.test(gpu||"");
+  const midGPU  = /GTX|MX\d|Iris Xe|Radeon|Apple GPU/i.test(gpu||"") && !highGPU;
+  // ---- Đề xuất theo phần cứng ----
+  let w,h,fps,reason;
+  if(isMobile){
+    if(cores>=8 && mem>=6){ w=1920;h=1080;fps=60; reason="Điện thoại/máy tính bảng cấu hình tốt → Full HD 60FPS cho mượt và nhẹ máy."; }
+    else { w=1920;h=1080;fps=30; reason="Thiết bị di động → Full HD 30FPS để xuất ổn định, tránh nóng máy/giật."; }
+  } else if(cores>=12 && (mem===0||mem>=8) && highGPU){
+    w=7680;h=4320;fps=120; reason="CPU nhiều nhân + GPU mạnh ("+(gpu||"GPU rời")+") → đạt mức tối đa 8K 120FPS.";
+  } else if(cores>=8 && highGPU){
+    w=3840;h=2160;fps=120; reason="GPU mạnh nhưng CPU vừa → 4K 120FPS cân bằng giữa độ nét và độ mượt.";
+  } else if(cores>=8 && (mem===0||mem>=8)){
+    w=3840;h=2160;fps=60; reason="CPU tốt, GPU tích hợp/không rõ → 4K 60FPS là mức an toàn, sắc nét cho màn LED.";
+  } else if(cores>=6){
+    w=2560;h=1440;fps=60; reason="Thiết bị tầm trung → 2K 60FPS mượt mà, xuất nhanh.";
+  } else if(cores>=4){
+    w=1920;h=1080;fps=60; reason="Thiết bị phổ thông → Full HD 60FPS.";
+  } else {
+    w=1920;h=1080;fps=30; reason="Phần cứng hạn chế (hoặc trình duyệt không chia sẻ thông tin) → Full HD 30FPS để tránh lỗi khi xuất.";
+  }
+  const codecOK = !!window.MediaRecorder;
+  return {cores,mem,gpu,isMobile,highGPU,midGPU,w,h,fps,reason,codecOK,
+    resValue:w+"x"+h,
+    label:(h>=4320?"8K":h>=2160?"4K":h>=1440?"2K":h>=1080?"FullHD":"HD")+"_"+fps+"FPS"};
+}
+
+function exportDurationMs(item){
+  if(item.pattern==="mix" && item.mix){
+    const totalSec = item.mix.scenes.length*(item.mix.sceneDur||8);
+    return Math.min(300000, Math.round(totalSec*1000/Math.max(0.05,(item.speed||1))));
+  }
+  return 8000;
+}
+
+function setMode(auto){
+  $("#modeAuto").classList.toggle("active", auto);
+  $("#modeManual").classList.toggle("active", !auto);
+  $("#expRes").disabled = auto; $("#expFps").disabled = auto;
+  if(auto && detectedProfile){
+    $("#expRes").value = detectedProfile.resValue;
+    $("#expFps").value = String(detectedProfile.fps);
+  }
+  updateExportSummary();
+}
+function currentExportSettings(){
+  const [w,h] = $("#expRes").value.split("x").map(Number);
+  const fps = +$("#expFps").value;
+  const bitrate = Math.min(250_000_000, Math.max(12_000_000, Math.round(w*h*fps*0.12)));
+  return {w,h,fps,bitrate, label:(h>=4320?"8K":h>=2160?"4K":h>=1440?"2K":h>=1080?"FullHD":"HD")+"_"+fps+"FPS"};
+}
+function updateExportSummary(){
+  if(!pendingExport) return;
+  const q = currentExportSettings();
+  const item = {...pendingExport.item, speed:+$("#expSpeed").value};
+  const durSec = exportDurationMs(item)/1000;
+  const sizeMB = q.bitrate*durSec/8/1e6;
+  $("#oExpSpeed").textContent = (+$("#expSpeed").value).toFixed(2)+"×";
+  $("#expSummary").innerHTML =
+    `📦 Cấu hình xuất: <b>${q.w}×${q.h} @ ${q.fps}FPS</b> • Bitrate ~${(q.bitrate/1e6).toFixed(0)} Mbps<br>`+
+    `⏩ Tốc độ visual trong video: <b>${(+$("#expSpeed").value).toFixed(2)}×</b> • Thời lượng clip: <b>${durSec.toFixed(0)} giây</b>${item.pattern==="mix"?" (trọn 1 vòng mix)":""}<br>`+
+    `💾 Dung lượng ước tính: <b>~${sizeMB>=1000?(sizeMB/1000).toFixed(2)+" GB":sizeMB.toFixed(0)+" MB"}</b>`+
+    (q.h>=4320?`<br>⚠️ 8K rất nặng — hãy giữ nguyên tab này trong lúc xuất.`:"");
+}
+
+function downloadVideo(item, btn, progressBox){
+  if(!window.MediaRecorder || !HTMLCanvasElement.prototype.captureStream){
+    toast("⚠️ Trình duyệt không hỗ trợ ghi video. Hãy dùng Chrome/Edge, hoặc tải PNG thay thế."); return;
+  }
+  pendingExport = {item, btn, progressBox};
+  detectedProfile = detectDevice();
+  const d = detectedProfile;
+  $("#expItemName").textContent = item.name;
+  $("#detectBox").innerHTML =
+    `🖥 <b>Thiết bị của bạn:</b> CPU <b>${d.cores? d.cores+" nhân":"không đọc được"}</b> • RAM <b>${d.mem? "~"+d.mem+" GB":"không đọc được"}</b><br>`+
+    `🎮 GPU: <b>${d.gpu? String(d.gpu).slice(0,80):"không đọc được"}</b> • ${d.isMobile?"📱 Thiết bị di động":"💻 Máy tính"} • Ghi video: <b>${d.codecOK?"hỗ trợ ✅":"không hỗ trợ ❌"}</b><br>`+
+    `🤖 Đề xuất: <b>${d.w}×${d.h} @ ${d.fps}FPS</b> — ${d.reason}`;
+  // mặc định: tự động theo đề xuất; tốc độ lấy theo tốc độ hiện tại của visual
+  $("#expSpeed").value = Math.min(5, Math.max(0.05, item.speed||1));
+  setMode(true);
+  $("#exportModal").classList.add("open");
+}
+function closeExport(){ $("#exportModal").classList.remove("open"); }
+$("#modeAuto").onclick = ()=> setMode(true);
+$("#modeManual").onclick = ()=> setMode(false);
+$("#expRes").addEventListener("change", updateExportSummary);
+$("#expFps").addEventListener("change", updateExportSummary);
+$("#expSpeed").addEventListener("input", updateExportSummary);
+document.querySelectorAll("#expSpeedPresets button").forEach(b=> b.onclick=()=>{ $("#expSpeed").value=b.dataset.v; updateExportSummary(); });
+$("#exportCloseBtn").onclick = closeExport;
+$("#exportModal").addEventListener("click", e=>{ if(e.target.id==="exportModal") closeExport(); });
+$("#startExportBtn").onclick = ()=>{
+  if(!pendingExport) return;
+  const q = currentExportSettings();
+  const item = {...pendingExport.item, speed:+$("#expSpeed").value};
+  const {btn, progressBox} = pendingExport;
+  closeExport();
+  executeExportVideo(item, btn, progressBox, q);
+  pendingExport = null;
+};
+
+async function executeExportVideo(item, btn, progressBox, q){
   if(!window.MediaRecorder || !HTMLCanvasElement.prototype.captureStream){
     toast("⚠️ Trình duyệt không hỗ trợ ghi video. Hãy dùng Chrome/Edge, hoặc tải PNG thay thế."); return;
   }
@@ -1047,8 +1236,7 @@ async function downloadVideo(item, btn, progressBox){
   if(progressBox){ progressBox.style.display="block"; }
   const bar = progressBox?.querySelector("i");
   try{
-    const q = exportSettings();
-    const DUR = (item.pattern==="mix" && item.mix) ? Math.min(180000, Math.round(item.mix.scenes.length*(item.mix.sceneDur||8)*1000)) : 8000; // bản mix: xuất trọn 1 vòng lặp
+    const DUR = exportDurationMs(item); // bản mix: xuất trọn 1 vòng lặp (đã tính theo tốc độ đã chọn)
     if(q.h>=4320) toast("🎬 Bắt đầu xuất "+q.w+"×"+q.h+" @ "+q.fps+"FPS ("+(q.bitrate/1e6).toFixed(0)+" Mbps). Quá trình này rất nặng — vui lòng không chuyển tab...");
     const c=document.createElement("canvas"); c.width=q.w; c.height=q.h;
     const ctx=c.getContext("2d");
@@ -1089,5 +1277,5 @@ async function downloadVideo(item, btn, progressBox){
 $("#stageVideoBtn").onclick = e=> downloadVideo(stageItem(), e.target, $("#dlProgress"));
 $("#stagePngBtn").onclick = ()=> downloadPNG(stageItem());
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a60d91bc3e6e06e8',t:'MTc5NTc0NTE0MQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a60d91bc3e6e06e8',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a60db7244fea046c',t:'MTc5NTc0NjY3Mw=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a60db7244fea046c',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
