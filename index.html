@@ -229,6 +229,76 @@ canvas{will-change:transform}
 .group-toggle{margin-left:auto;background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 14px;border-radius:11px;font-weight:700;font-size:13px}
 .group-toggle:hover{background:var(--card2)}
 .group-divider{height:1px;flex:1;min-width:40px;background:linear-gradient(90deg,var(--border),transparent)}
+
+/* ===== PRESENTER / TIMELINE (vMix style) ===== */
+.presenter{position:fixed;inset:0;z-index:300;background:#070912;color:#eef1ff;display:none;overflow:auto;font-family:var(--font)}
+.presenter.open{display:block}
+.presenter *{box-sizing:border-box}
+.pv-top{display:flex;align-items:center;gap:14px;padding:12px 18px;background:#0d1020;border-bottom:1px solid #232842;position:sticky;top:0;z-index:5}
+.pv-logo{font-weight:900;letter-spacing:.08em}
+.pv-logo span{color:#ff4757}
+.onair{background:#e01e2b;color:#fff;font-weight:900;padding:6px 14px;border-radius:8px;letter-spacing:.12em;animation:pulse 1.4s infinite}
+.pv-clock{font-family:monospace;font-size:19px;font-weight:700;color:#8be9fd}
+.pv-top .sp{flex:1}
+.pv-btn{background:#1a1e35;color:#eef1ff;border:1px solid #2c3157;padding:10px 15px;border-radius:10px;font-weight:800;cursor:pointer;font-size:13.5px}
+.pv-btn:hover{background:#242a4d}
+.pv-btn.red{background:#e01e2b;border-color:#ff5b6a;color:#fff}
+.pv-btn.green{background:#0d9d58;border-color:#17c964;color:#fff}
+.pv-btn.blue{background:linear-gradient(135deg,#6d5cff,#00a8c5);border-color:transparent;color:#fff}
+.pv-btn.big{padding:14px 20px;font-size:15px}
+.pv-btn:disabled{opacity:.45;cursor:not-allowed}
+.pv-layout{display:grid;grid-template-columns:470px 1fr;gap:16px;padding:16px 18px;max-width:1900px;margin:0 auto}
+@media(max-width:1080px){.pv-layout{grid-template-columns:1fr}}
+.pv-panel{background:#0d1020;border:1px solid #232842;border-radius:16px;padding:14px}
+.pv-panel h4{margin:0 0 10px;font-size:13px;letter-spacing:.12em;color:#9aa3c7}
+.screen-wrap{position:relative;border-radius:12px;overflow:hidden;background:#000;aspect-ratio:16/9}
+.screen-wrap canvas{width:100%;height:100%;display:block}
+.screen-tag{position:absolute;top:9px;left:9px;padding:5px 11px;border-radius:7px;font-size:11px;font-weight:900;letter-spacing:.1em;color:#fff;z-index:2}
+.tag-pvw{background:#0d9d58}.tag-pgm{background:#e01e2b}
+.screen-name{position:absolute;left:9px;bottom:9px;right:9px;background:rgba(0,0,0,.62);color:#fff;padding:7px 11px;border-radius:8px;font-size:13px;font-weight:700;z-index:2;backdrop-filter:blur(4px)}
+.blackout-cover{position:absolute;inset:0;background:#000;color:#666;display:none;place-items:center;font-weight:900;letter-spacing:.3em;z-index:3}
+.pv-row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:11px}
+.pv-row label{font-size:12.5px;font-weight:700;color:#9aa3c7;display:flex;justify-content:space-between;width:100%}
+.pv-row label output{color:#4de3ff}
+.pv-range{width:100%;accent-color:#00c2ff;cursor:pointer;height:26px}
+.pv-num{background:#141830;border:1px solid #2c3157;color:#fff;border-radius:9px;padding:9px 10px;font-family:inherit;font-size:13.5px}
+.pv-num.sm{width:82px;padding:7px 8px}
+select.pv-num{cursor:pointer}
+.pool-search{width:100%;margin-bottom:10px}
+.pool-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-height:430px;overflow:auto;padding-right:3px}
+.pool-item{background:#12162b;border:1px solid #252a4d;border-radius:11px;overflow:hidden}
+.pool-item canvas{width:100%;aspect-ratio:16/9;display:block;background:#000}
+.pool-item .pi-body{padding:8px 9px}
+.pool-item .pi-name{font-size:12px;font-weight:800;line-height:1.35;min-height:32px}
+.pool-item .pi-row{display:flex;gap:6px;align-items:center;margin-top:6px}
+.pool-item .pi-row .pv-btn{padding:6px 8px;font-size:11.5px;border-radius:8px;flex:1}
+.pool-item input[type=range]{flex:1.2;accent-color:#00c2ff;min-width:56px}
+.pool-item .pi-sp{font-size:11px;color:#4de3ff;font-weight:800;width:36px;text-align:right}
+.queue-list{display:flex;flex-direction:column;gap:8px;max-height:330px;overflow:auto}
+.queue-empty{color:#69708f;font-size:13px;text-align:center;padding:18px 8px;border:1px dashed #2c3157;border-radius:11px}
+.q-item{display:flex;gap:9px;align-items:center;background:#12162b;border:1px solid #252a4d;border-radius:11px;padding:8px 9px;cursor:pointer}
+.q-item:hover{border-color:#00c2ff}
+.q-idx{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#6d5cff,#00a8c5);display:grid;place-items:center;font-weight:900;font-size:12.5px;flex:none}
+.q-main{flex:1;min-width:0}
+.q-name{font-size:12.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.q-sub{font-size:11px;color:#9aa3c7;margin-top:2px}
+.q-item input[type=range]{width:86px;accent-color:#00c2ff}
+.q-item .q-sp{font-size:11px;color:#4de3ff;font-weight:800;width:38px}
+.q-x{background:#2a1430;color:#ff8fa8;border:1px solid #4d2440;width:28px;height:28px;border-radius:8px;cursor:pointer;flex:none}
+.q-move{background:#1a1e35;color:#cfd6ff;border:1px solid #2c3157;width:24px;height:28px;border-radius:8px;cursor:pointer;flex:none;padding:0}
+.timeline-bar{display:flex;gap:7px;align-items:stretch;overflow-x:auto;padding:4px 2px 8px}
+.tl-block{min-width:118px;border-radius:11px;padding:9px 11px;background:#171b31;border:1px solid #2c3157;cursor:pointer;position:relative;overflow:hidden;flex:none}
+.tl-block .tl-name{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-block .tl-sub{font-size:10.5px;color:#9aa3c7;margin-top:3px}
+.tl-block.now{background:linear-gradient(135deg,#5c1220,#8c1a2b);border-color:#ff4757;cursor:default}
+.tl-block.next{border-color:#0d9d58}
+.tl-prog{position:absolute;left:0;bottom:0;height:4px;background:#ff4757;width:0}
+.pgm-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:12px}
+.pgm-meta .m{background:#12162b;border:1px solid #252a4d;border-radius:11px;padding:9px 12px}
+.pgm-meta .m b{display:block;font-size:17px}
+.pgm-meta .m span{font-size:10.5px;color:#9aa3c7;font-weight:700;letter-spacing:.08em}
+.take-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.take-row .pv-btn{flex:1;min-width:110px}
 </style>
 </head>
 <body>
@@ -241,6 +311,7 @@ canvas{will-change:transform}
       <a href="#studio">🎨 Studio Tạo Visual</a>
       <a href="#library">🗂️ Thư Viện</a>
       <a href="#" id="navMixBtn">🎬 Tạo Mix</a>
+      <a href="#" id="navPresentBtn">📺 Timeline Trình Chiếu</a>
     </div>
     <div class="nav-right">
       <button class="theme-btn" id="themeBtn" title="Chuyển chế độ Sáng / Tối">🌙</button>
@@ -259,6 +330,7 @@ canvas{will-change:transform}
       <a class="btn" href="#library">▶ Xem thư viện visual</a>
       <a class="btn ghost" href="#studio">🎨 Tự tạo visual của bạn</a>
       <button class="btn ghost" id="heroMixBtn">🎬 Mix nhiều visual thành 1 đoạn dài</button>
+      <button class="btn ghost" id="heroPresentBtn">📺 Mở Timeline Trình Chiếu (kiểu vMix)</button>
     </div>
     <div class="stats">
       <div class="stat"><b id="statCount">8</b><span>MẪU VISUAL</span></div>
@@ -472,6 +544,113 @@ canvas{will-change:transform}
   </div>
 </div>
 
+
+
+<!-- ================= PRESENTER / TIMELINE (vMix style) ================= -->
+<div class="presenter" id="presenter">
+  <div class="pv-top">
+    <div class="pv-logo">📺 TIMELINE <span>TRÌNH CHIẾU</span></div>
+    <span class="onair">● ON AIR</span>
+    <span class="pv-clock" id="pvClock">00:00:00</span>
+    <div class="sp"></div>
+    <label style="font-size:13px;font-weight:700;color:#9aa3c7;display:flex;gap:7px;align-items:center">
+      <input type="checkbox" id="autoPlayChk" style="width:17px;height:17px;accent-color:#0d9d58"> TỰ ĐỘNG CHUYỂN theo timeline
+    </label>
+    <button class="pv-btn" id="presenterClose">✕ Thoát (Esc)</button>
+  </div>
+
+  <div class="pv-layout">
+    <!-- ============ CỘT TRÁI: MÀN 2 CHUẨN BỊ ============ -->
+    <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+      <div class="pv-panel">
+        <h4>🟢 MÀN 2 — PREVIEW / CHUẨN BỊ</h4>
+        <div class="screen-wrap">
+          <canvas id="pvCanvas" width="512" height="288"></canvas>
+          <span class="screen-tag tag-pvw">PVW • MÀN 2</span>
+          <span class="screen-name" id="pvName">Chưa chọn visual</span>
+        </div>
+        <div class="pv-row">
+          <label>⏩ Tốc độ phát khi lên Màn 1 <output id="oPvSpeed">1.00×</output></label>
+          <input type="range" class="pv-range" id="pvSpeed" min="0.05" max="5" step="0.05" value="1">
+        </div>
+        <div class="pv-row">
+          <label style="width:auto">⏱ Thời lượng (giây):</label>
+          <input type="number" class="pv-num sm" id="pvDur" value="10" min="2" max="300">
+          <button class="pv-btn blue" id="addQueueBtn" style="flex:1">＋ Thêm vào hàng chờ</button>
+        </div>
+        <div class="pv-row">
+          <button class="pv-btn green big" id="takeBtn" style="flex:1">▶ TAKE — Chuyển lên Màn 1</button>
+        </div>
+      </div>
+
+      <div class="pv-panel">
+        <h4>📋 DANH SÁCH PHÁT CHỜ (PLAYLIST)</h4>
+        <div class="queue-list" id="queueList"></div>
+        <div class="pv-row">
+          <button class="pv-btn" id="clearQueueBtn">🗑 Xoá hàng chờ</button>
+          <span style="font-size:12px;color:#9aa3c7">Bấm vào một mục để nạp lại vào Màn 2 • Kéo thanh tốc độ để chỉnh tốc độ phát của riêng mục đó</span>
+        </div>
+      </div>
+
+      <div class="pv-panel">
+        <h4>🗂 KHO VISUAL — CHỌN VÀO MÀN 2 HOẶC THÊM HÀNG CHỜ</h4>
+        <input class="pv-num pool-search" id="poolSearch" type="text" placeholder="🔍 Tìm visual trong kho...">
+        <div class="pool-grid" id="poolGrid"></div>
+      </div>
+    </div>
+
+    <!-- ============ CỘT PHẢI: MÀN 1 TRÌNH CHIẾU ============ -->
+    <div style="min-width:0">
+      <div class="pv-panel">
+        <h4>🔴 MÀN 1 — PROGRAM / TRÌNH CHIẾU CHÍNH</h4>
+        <div class="screen-wrap" style="border:2px solid #e01e2b;box-shadow:0 0 44px rgba(224,30,43,.35)">
+          <canvas id="pgCanvas" width="960" height="540"></canvas>
+          <span class="screen-tag tag-pgm">PGM • MÀN 1 • ON AIR</span>
+          <span class="screen-name" id="pgName">Đang phát: —</span>
+          <div class="blackout-cover" id="blackoutCover">BLACKOUT</div>
+        </div>
+        <div class="pgm-meta">
+          <div class="m"><b id="pgElapsed">0.0s</b><span>ĐÃ PHÁT MỤC HIỆN TẠI</span></div>
+          <div class="m"><b id="pgDurInfo">10s</b><span>THỜI LƯỢNG MỤC</span></div>
+          <div class="m"><b id="pgNext">—</b><span>VISUAL TIẾP THEO</span></div>
+          <div class="m"><b id="qCount">0</b><span>MỤC ĐANG CHỜ</span></div>
+        </div>
+        <div class="pv-row">
+          <label>⏩ Tốc độ Màn 1 đang phát <output id="oPgSpeed">1.00×</output></label>
+          <input type="range" class="pv-range" id="pgSpeed" min="0.05" max="5" step="0.05" value="1">
+        </div>
+        <div class="pv-row">
+          <label style="width:auto">Hiệu ứng chuyển:</label>
+          <select class="pv-num" id="transType">
+            <option value="fade">🌫 Mờ dần (Fade)</option>
+            <option value="zoom">🔍 Zoom</option>
+            <option value="slide">➡ Trượt</option>
+            <option value="cut">✂ Cắt ngay (CUT)</option>
+          </select>
+          <label style="width:auto">Thời gian chuyển:</label>
+          <select class="pv-num" id="transDur">
+            <option value="300">0.3 giây</option>
+            <option value="700" selected>0.7 giây</option>
+            <option value="1200">1.2 giây</option>
+            <option value="2000">2 giây</option>
+          </select>
+        </div>
+        <div class="take-row">
+          <button class="pv-btn big" id="cutBtn">✂ CUT</button>
+          <button class="pv-btn red big" id="fadeBtn">▶ TAKE / FADE</button>
+          <button class="pv-btn green big" id="nextBtn">⏭ CHUYỂN TIẾP THEO</button>
+          <button class="pv-btn big" id="blackBtn">⬛ BLACKOUT</button>
+        </div>
+      </div>
+
+      <div class="pv-panel" style="margin-top:16px">
+        <h4>🎞 TIMELINE TRÌNH CHIẾU</h4>
+        <div class="timeline-bar" id="timelineBar"></div>
+        <div style="font-size:12px;color:#9aa3c7">Khối đỏ = đang phát trên Màn 1 • Các khối tiếp theo = hàng chờ theo thứ tự. Bấm vào một khối chờ để nạp vào Màn 2 chuẩn bị. Khi bật <b>TỰ ĐỘNG CHUYỂN</b>, hết thời lượng mỗi mục hệ thống sẽ tự chuyển mục tiếp theo lên Màn 1.</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- EXPORT / DOWNLOAD DIALOG -->
 <div class="modal" id="exportModal">
@@ -2707,6 +2886,29 @@ function animate(now){
     if(canvas.id==="stageCanvas" && !stagePlaying) return;
     if(canvas.id==="modalCanvas" && !modalPlaying) return;
     if(!document.body.contains(canvas)){ liveCanvases.delete(canvas); visibilityObserver && visibilityObserver.unobserve(canvas); return; }
+    if(canvas.id==="pgCanvas" && pgTransition){
+      // Đang chuyển cảnh: kết xuất cảnh cũ + cảnh mới ra canvas tạm rồi hoà trộn
+      const tr=pgTransition, el=now-tr.start, pr=Math.min(1, el/tr.dur), sm=pr*pr*(3-2*pr);
+      tr.fromVt += dt*(tr.fromSpeed||1); tr.toVt += dt*(tr.toSpeed||1);
+      _mixTemps.forEach(c2=>{ c2.width=canvas.width; c2.height=canvas.height; });
+      const cctx=canvas.getContext("2d");
+      try{
+        drawVisual(_mixTemps[0].getContext("2d"), canvas.width, canvas.height, tr.fromItem, tr.fromVt);
+        drawVisual(_mixTemps[1].getContext("2d"), canvas.width, canvas.height, tr.toItem, tr.toVt);
+        cctx.setTransform(1,0,0,1,0,0); cctx.globalAlpha=1;
+        cctx.drawImage(_mixTemps[0],0,0);
+        cctx.save(); cctx.globalAlpha=sm;
+        if(tr.type==="slide") cctx.translate((1-sm)*canvas.width*0.35,0);
+        if(tr.type==="zoom"){ cctx.translate(canvas.width/2,canvas.height/2); cctx.scale(0.94+0.06*sm,0.94+0.06*sm); cctx.translate(-canvas.width/2,-canvas.height/2); }
+        cctx.drawImage(_mixTemps[1],0,0); cctx.restore();
+      }catch(e){ /* lỗi khung chuyển thì bỏ qua */ }
+      if(pr>=1){
+        v.item=tr.toItem; v.speedMul=tr.toSpeed||1; v.vt=tr.toVt;
+        pgItem=tr.toItem; pgDurCurrent=tr.dur2||10; pgStartedAt=performance.now();
+        pgTransition=null; updatePresenterLabels();
+      }
+      return;
+    }
     if(v.visible===false) return; // ngoài màn hình thì tạm dừng vẽ
     // Thumbnail ở thư viện chỉ cần ~30fps (màn hình chính/preview vẫn 60fps) -> nhẹ máy gấp đôi
     const isThumb = canvas.id!=="stageCanvas" && canvas.id!=="modalCanvas";
@@ -3032,6 +3234,193 @@ $("#createMixBtn").onclick = ()=>{
   setTimeout(()=> openPreview(mixItem), 350);
 };
 
+/* ================= PRESENTER / TIMELINE ================= */
+let pgItem=null, pvItem=null, pgTransition=null, pgStartedAt=performance.now(), pgDurCurrent=10;
+let playQueue=[]; // {uid, item, speed, dur}
+let presenterOpen=false, blackout=false;
+
+function fmtClock(d){ const z=n=>String(n).padStart(2,"0"); return z(d.getHours())+":"+z(d.getMinutes())+":"+z(d.getSeconds()); }
+setInterval(()=>{ const el=$("#pvClock"); if(el && presenterOpen) el.textContent=fmtClock(new Date()); },500);
+
+function openPresenter(){
+  presenterOpen=true;
+  $("#presenter").classList.add("open");
+  document.body.style.overflow="hidden";
+  if(!pgItem) pgItem=items[0];
+  if(!pvItem) pvItem=items[1]||items[0];
+  registerCanvas($("#pgCanvas"), pgItem);
+  registerCanvas($("#pvCanvas"), pvItem);
+  const pgE=liveCanvases.get($("#pgCanvas")); if(pgE) pgE.speedMul=+$("#pgSpeed").value||1;
+  pgStartedAt=performance.now();
+  buildPool(); renderQueue(); updatePresenterLabels();
+}
+function closePresenter(){
+  presenterOpen=false;
+  $("#presenter").classList.remove("open");
+  document.body.style.overflow="";
+  liveCanvases.delete($("#pgCanvas")); liveCanvases.delete($("#pvCanvas"));
+  pgTransition=null;
+}
+["navPresentBtn","heroPresentBtn"].forEach(id=>{ const b=document.getElementById(id); if(b) b.onclick=e=>{ e.preventDefault(); openPresenter(); }; });
+$("#presenterClose").onclick=closePresenter;
+document.addEventListener("keydown",e=>{ if(e.key==="Escape" && presenterOpen) closePresenter(); });
+
+function updatePresenterLabels(){
+  $("#pgName").textContent="Đang phát: "+(pgItem?pgItem.name:"—");
+  $("#pvName").textContent="Chuẩn bị: "+(pvItem?pvItem.name:"—")+" • sẽ phát ở "+(+$("#pvSpeed").value).toFixed(2)+"×";
+  $("#pgNext").textContent=playQueue.length? playQueue[0].item.name : "—";
+  $("#qCount").textContent=playQueue.length;
+  $("#pgDurInfo").textContent=pgDurCurrent+"s";
+  renderTimeline();
+}
+$("#pvSpeed").addEventListener("input",()=>{ $("#oPvSpeed").textContent=(+$("#pvSpeed").value).toFixed(2)+"×"; updatePresenterLabels(); });
+$("#pgSpeed").addEventListener("input",()=>{
+  $("#oPgSpeed").textContent=(+$("#pgSpeed").value).toFixed(2)+"×";
+  const e=liveCanvases.get($("#pgCanvas")); if(e && !pgTransition) e.speedMul=+$("#pgSpeed").value;
+});
+
+/* --- Kho visual bên Màn 2 --- */
+function buildPool(){
+  const q=($("#poolSearch").value||"").toLowerCase();
+  const box=$("#poolGrid"); box.innerHTML="";
+  items.forEach(it=>{
+    if(q && !it.name.toLowerCase().includes(q)) return;
+    const el=document.createElement("div"); el.className="pool-item";
+    el.innerHTML=`<canvas width="256" height="144"></canvas>
+      <div class="pi-body">
+        <div class="pi-name">${it.name.replace(/</g,"&lt;")}</div>
+        <div class="pi-row">
+          <span style="font-size:11px;color:#9aa3c7;font-weight:700">Tốc độ:</span>
+          <input type="range" class="pi-speed" min="0.05" max="5" step="0.05" value="${it.speed||1}">
+          <span class="pi-sp">${(it.speed||1).toFixed(2)}×</span>
+        </div>
+        <div class="pi-row">
+          <button class="pv-btn pi-load">🟢 Vào Màn 2</button>
+          <button class="pv-btn pi-add" style="background:#1d2b52">＋ Hàng chờ</button>
+        </div>
+      </div>`;
+    try{ drawVisual(el.querySelector("canvas").getContext("2d"),256,144,it,2.4); }
+    catch(e){ try{ drawFallback(el.querySelector("canvas").getContext("2d"),256,144,it,1); }catch(_){}}
+    const sp=el.querySelector(".pi-speed"), spOut=el.querySelector(".pi-sp");
+    sp.addEventListener("input",()=> spOut.textContent=(+sp.value).toFixed(2)+"×");
+    el.querySelector(".pi-load").onclick=()=> loadPreview(it, +sp.value);
+    el.querySelector(".pi-add").onclick=()=>{
+      playQueue.push({uid:Date.now()+Math.random(), item:it, speed:+sp.value, dur:+$("#pvDur").value||10});
+      renderQueue(); updatePresenterLabels();
+      toast("＋ Đã thêm “"+it.name+"” vào hàng chờ (phát ở "+(+sp.value).toFixed(2)+"×)");
+    };
+    box.appendChild(el);
+  });
+  if(!box.children.length) box.innerHTML='<div class="queue-empty">Không tìm thấy visual nào.</div>';
+}
+$("#poolSearch").addEventListener("input", buildPool);
+
+function loadPreview(it, speed){
+  pvItem=it;
+  if(speed) $("#pvSpeed").value=Math.min(5,Math.max(0.05,speed));
+  $("#oPvSpeed").textContent=(+$("#pvSpeed").value).toFixed(2)+"×";
+  registerCanvas($("#pvCanvas"), it);
+  updatePresenterLabels();
+}
+
+/* --- Hàng chờ --- */
+$("#addQueueBtn").onclick=()=>{
+  if(!pvItem){ toast("⚠️ Hãy chọn một visual vào Màn 2 trước!"); return; }
+  playQueue.push({uid:Date.now()+Math.random(), item:pvItem, speed:+$("#pvSpeed").value, dur:+$("#pvDur").value||10});
+  renderQueue(); updatePresenterLabels();
+  toast("＋ Đã thêm “"+pvItem.name+"” vào hàng chờ");
+};
+$("#clearQueueBtn").onclick=()=>{ playQueue=[]; renderQueue(); updatePresenterLabels(); };
+
+function renderQueue(){
+  const box=$("#queueList"); box.innerHTML="";
+  if(!playQueue.length){ box.innerHTML='<div class="queue-empty">Hàng chờ trống.<br>Chọn visual trong kho → chỉnh tốc độ → bấm “＋ Hàng chờ”.</div>'; return; }
+  playQueue.forEach((q,idx)=>{
+    const el=document.createElement("div"); el.className="q-item";
+    el.innerHTML=`<span class="q-idx">${idx+1}</span>
+      <div class="q-main"><div class="q-name">${q.item.name.replace(/</g,"&lt;")}</div>
+      <div class="q-sub">⏱ ${q.dur}s • phát ở tốc độ bên cạnh</div></div>
+      <input type="range" min="0.05" max="5" step="0.05" value="${q.speed}" title="Tốc độ phát khi lên Màn 1">
+      <span class="q-sp">${(+q.speed).toFixed(2)}×</span>
+      <button class="q-move" title="Lên">↑</button><button class="q-move" title="Xuống">↓</button>
+      <button class="q-x" title="Xoá">✕</button>`;
+    const rng=el.querySelector("input[type=range]"), out=el.querySelector(".q-sp");
+    rng.addEventListener("input",()=>{ q.speed=+rng.value; out.textContent=(+rng.value).toFixed(2)+"×"; renderTimeline(); });
+    rng.addEventListener("click",e=>e.stopPropagation());
+    el.querySelectorAll(".q-move")[0].onclick=e=>{ e.stopPropagation(); if(idx>0){ [playQueue[idx-1],playQueue[idx]]=[playQueue[idx],playQueue[idx-1]]; renderQueue(); updatePresenterLabels(); } };
+    el.querySelectorAll(".q-move")[1].onclick=e=>{ e.stopPropagation(); if(idx<playQueue.length-1){ [playQueue[idx+1],playQueue[idx]]=[playQueue[idx],playQueue[idx+1]]; renderQueue(); updatePresenterLabels(); } };
+    el.querySelector(".q-x").onclick=e=>{ e.stopPropagation(); playQueue.splice(idx,1); renderQueue(); updatePresenterLabels(); };
+    el.onclick=()=> loadPreview(q.item, q.speed);
+    box.appendChild(el);
+  });
+  renderTimeline();
+}
+
+/* --- Timeline --- */
+function renderTimeline(){
+  const bar=$("#timelineBar"); if(!bar || !presenterOpen && !pgItem) return;
+  bar.innerHTML="";
+  const mk=(title,sub,cls,onclick)=>{
+    const d=document.createElement("div"); d.className="tl-block "+cls;
+    d.style.flex=`0 0 ${Math.max(118, Math.min(230, (parseFloat(sub)||10)*13))}px`;
+    d.innerHTML=`<div class="tl-name">${title}</div><div class="tl-sub">${sub}</div>${cls==="now"?'<span class="tl-prog" id="tlProg"></span>':''}`;
+    if(onclick) d.onclick=onclick;
+    bar.appendChild(d);
+  };
+  if(pgItem) mk("🔴 "+pgItem.name, pgDurCurrent+"s • "+(+$("#pgSpeed").value).toFixed(2)+"×", "now", null);
+  playQueue.forEach((q,i)=> mk((i===0?"⏭ ":"")+q.item.name, q.dur+"s • "+(+q.speed).toFixed(2)+"×", i===0?"next":"", ()=> loadPreview(q.item,q.speed)));
+  if(!playQueue.length && pgItem){
+    const d=document.createElement("div"); d.className="tl-block";
+    d.innerHTML='<div class="tl-name">— Hết hàng chờ —</div><div class="tl-sub">Thêm visual từ kho bên trái</div>';
+    bar.appendChild(d);
+  }
+}
+
+/* --- Chuyển cảnh Màn 2 -> Màn 1 --- */
+function takeToProgram(toItem, speed, dur2, forceCut){
+  if(!toItem) return;
+  const entry=liveCanvases.get($("#pgCanvas"));
+  const type=forceCut? "cut" : $("#transType").value;
+  const durMs=forceCut||type==="cut" ? 30 : +$("#transDur").value;
+  blackout=false; $("#blackoutCover").style.display="none"; $("#blackBtn").textContent="⬛ BLACKOUT";
+  pgTransition={
+    fromItem: pgItem||toItem, fromVt: entry? entry.vt:0, fromSpeed: entry? (entry.speedMul||1)*( (pgItem&&pgItem.speed)||1 )/( (pgItem&&pgItem.speed)||1 ) : 1,
+    toItem, toVt: Math.random()*6, toSpeed: speed||1,
+    start: performance.now(), dur: durMs, type, dur2: dur2||10
+  };
+  // fromSpeed ở trên quy về hệ số nhân tương đối của hiệu ứng đích cho đơn giản:
+  pgTransition.fromSpeed = entry? entry.speedMul:1;
+  $("#pgSpeed").value=Math.min(5,Math.max(0.05,speed||1));
+  $("#oPgSpeed").textContent=(+$("#pgSpeed").value).toFixed(2)+"×";
+  pgItem=toItem; // cập nhật nhãn ngay
+  updatePresenterLabels();
+}
+$("#takeBtn").onclick=()=>{ if(pvItem) takeToProgram(pvItem, +$("#pvSpeed").value, +$("#pvDur").value||10, false); };
+$("#fadeBtn").onclick=()=>{ if(pvItem) takeToProgram(pvItem, +$("#pvSpeed").value, +$("#pvDur").value||10, false); };
+$("#cutBtn").onclick=()=>{ if(pvItem) takeToProgram(pvItem, +$("#pvSpeed").value, +$("#pvDur").value||10, true); };
+function takeNext(){
+  if(!playQueue.length){ toast("⚠️ Hàng chờ trống — hãy thêm visual vào hàng chờ trước!"); return; }
+  const q=playQueue.shift();
+  loadPreview(q.item, q.speed);
+  takeToProgram(q.item, q.speed, q.dur, false);
+  renderQueue(); updatePresenterLabels();
+}
+$("#nextBtn").onclick=takeNext;
+$("#blackBtn").onclick=e=>{
+  blackout=!blackout;
+  $("#blackoutCover").style.display=blackout?"grid":"none";
+  e.target.textContent=blackout? "▶ Bỏ BLACKOUT":"⬛ BLACKOUT";
+};
+
+/* --- Đồng hồ tiến trình + tự động chuyển --- */
+setInterval(()=>{
+  if(!presenterOpen) return;
+  const el=(performance.now()-pgStartedAt)/1000;
+  $("#pgElapsed").textContent=el.toFixed(1)+"s";
+  const prog=$("#tlProg"); if(prog) prog.style.width=Math.min(100, el/Math.max(1,pgDurCurrent)*100)+"%";
+  if($("#autoPlayChk").checked && !pgTransition && playQueue.length && el>=pgDurCurrent) takeNext();
+},200);
+
 /* ================= DOWNLOAD ================= */
 function safeName(s){ return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").replace(/Đ/g,"D").replace(/[^\w\- ]/g,"").trim().replace(/\s+/g,"-") || "led-visual"; }
 
@@ -3222,5 +3611,5 @@ $("#stageVideoBtn").onclick = e=> downloadVideo(stageItem(), e.target, $("#dlPro
 $("#stagePngBtn").onclick = ()=> downloadPNG(stageItem());
 
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a6177a0e2c11a880',t:'MTc5NTg0OTAyOA=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a6177a0e2c11a880',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a6185d260b83882e',t:'MTc5NTg1ODMzMA=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a6185d260b83882e',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
