@@ -213,6 +213,22 @@ select:disabled,input:disabled{opacity:.45;cursor:not-allowed}
 
 /* Visual mới: ép canvas dùng GPU compositing, tránh repaint không cần thiết */
 canvas{will-change:transform}
+
+/* ===== THEME GROUPS ===== */
+.topic-chips{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:22px}
+.topic-chip{padding:9px 15px;border-radius:99px;background:var(--card);border:1px solid var(--border);color:var(--text);font-weight:700;font-size:13px;backdrop-filter:blur(10px);transition:.2s}
+.topic-chip:hover{transform:translateY(-2px);border-color:var(--accent)}
+.topic-chip.active{background:linear-gradient(135deg,var(--accent),#4f8cff 60%,var(--accent2));color:#fff;border-color:transparent;box-shadow:0 8px 22px rgba(109,92,255,.35)}
+.topic-chip .n{opacity:.75;font-weight:800;margin-left:4px}
+.group-section{margin-bottom:38px;scroll-margin-top:110px}
+.group-head{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.group-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:26px;background:var(--card);border:1px solid var(--border);backdrop-filter:blur(10px);box-shadow:var(--shadow)}
+.group-head h3{margin:0;font-size:22px}
+.group-head p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.group-count{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:5px 12px;border-radius:99px;font-size:12px;font-weight:900}
+.group-toggle{margin-left:auto;background:var(--card);border:1px solid var(--border);color:var(--text);padding:9px 14px;border-radius:11px;font-weight:700;font-size:13px}
+.group-toggle:hover{background:var(--card2)}
+.group-divider{height:1px;flex:1;min-width:40px;background:linear-gradient(90deg,var(--border),transparent)}
 </style>
 </head>
 <body>
@@ -405,7 +421,8 @@ canvas{will-change:transform}
         </select>
       </div>
     </div>
-    <div class="grid" id="grid"></div>
+    <div class="topic-chips" id="topicChips"></div>
+    <div id="grid"></div>
     <div class="empty" id="emptyBox" style="display:none"><div class="big">🛸</div>Không tìm thấy visual nào phù hợp.<br>Hãy thử từ khoá khác hoặc tạo mới trong Studio!</div>
   </section>
 
@@ -2784,56 +2801,130 @@ function updateCount(){ $("#statCount").textContent = items.length; }
 
 /* ================= GALLERY ================= */
 const grid = $("#grid");
+/* ===== PHÂN NHÓM CHỦ ĐỀ ===== */
+const TOPIC_GROUPS = [
+  {key:"game",    icon:"🎮", name:"Game & Phiêu Lưu",      desc:"Game pixel, bắn thiên thạch, đua xe, xếp hình, hầm ngục và săn rồng."},
+  {key:"cartoon", icon:"🐾", name:"Nhân Vật Hoạt Hình",    desc:"Các nhân vật hoạt hình gốc với hành động nhảy múa, bay lượn và biểu diễn."},
+  {key:"sports",  icon:"🏅", name:"Thể Thao",              desc:"Bóng đá, bóng rổ, tennis, bơi, chạy, xe đạp, lướt sóng, golf và hơn nữa."},
+  {key:"seasons", icon:"🌸", name:"Bốn Mùa Trong Năm",     desc:"Xuân hoa nở, hạ bãi biển, thu lúa chín và đông băng giá."},
+  {key:"weather", icon:"🌦", name:"Thời Tiết Thế Giới",     desc:"Nắng, mây, mưa, giông sét, tuyết, bão, sương mù, cầu vồng, lốc xoáy..."},
+  {key:"nature",  icon:"🌿", name:"Thiên Nhiên & Sinh Vật", desc:"Địa hình, đàn cá, biển sâu, thác nước, lửa trại và khinh khí cầu."},
+  {key:"space",   icon:"🔭", name:"Zoom, Vũ Trụ & Tương Lai", desc:"Zoom vô hạn xuyên ảnh, thiên hà, hành tinh và mưa dữ liệu Matrix."},
+  {key:"light",   icon:"✨", name:"Ánh Sáng & Sáng Tạo",    desc:"Sợi quang, DNA, kính vạn hoa, plasma, bánh răng và pháo hoa."},
+  {key:"mix",     icon:"🎬", name:"Bản Mix & Của Tôi",      desc:"Các bản mix chuyển cảnh và visual do chính bạn tạo ra."},
+];
+const PATTERN_TOPIC = {
+  pixelgame:"game",spaceshooter:"game",racer:"game",blockpuzzle:"game",invader:"game",dungeon:"game",portal:"game",dragonboss:"game",
+  mousepal:"cartoon",lionhoop:"cartoon",superchibi:"cartoon",penguin:"cartoon",foxrun:"cartoon",owlnight:"cartoon",
+  soccer:"sports",basketball:"sports",tennis:"sports",swimming:"sports",running:"sports",cycling:"sports",surfing:"sports",skiing:"sports",golf:"sports",gymnastics:"sports",
+  springbloom:"seasons",summerbeach:"seasons",autumnharvest:"seasons",winterfrost:"seasons",
+  sunnyday:"weather",cloudscape:"weather",rainstorm:"weather",thunderstorm:"weather",snowfall:"weather",blizzard:"weather",foggyforest:"weather",rainbow:"weather",hailstorm:"weather",tornado:"weather",hurricane:"weather",heatwave:"weather",desertwind:"weather",aurora:"weather",
+  terrain:"nature",fishschool:"nature",balloons:"nature",naturefall:"nature",campfire:"nature",waterfall:"nature",oceanlife:"nature",
+  zoomquilt:"space",deepzoom:"space",galaxy:"space",matrixrain:"space",orbitplanet:"space",tunnel:"space",grid:"space",
+  ribbons:"light",helix:"light",kaleidoscope:"light",plasma:"light",gears:"light",fireworks:"light",chrome:"light",bloom:"nature",
+};
+function topicOf(item){
+  if(item.pattern==="mix") return "mix";
+  const t=PATTERN_TOPIC[item.pattern];
+  if(t) return t;
+  return "mix"; // mẫu tự tạo chưa rõ chủ đề -> nhóm Của Tôi
+}
+let activeTopic = "all";
+const collapsedGroups = new Set();
+
+function renderTopicChips(){
+  const box=$("#topicChips"); if(!box) return;
+  const counts={all:items.length};
+  items.forEach(it=>{ const t=topicOf(it); counts[t]=(counts[t]||0)+1; });
+  box.innerHTML="";
+  const mk=(key,label)=>{
+    const b=document.createElement("button");
+    b.className="topic-chip"+(activeTopic===key?" active":"");
+    b.innerHTML=label+`<span class="n">${counts[key]||0}</span>`;
+    b.onclick=()=>{
+      activeTopic = (activeTopic===key && key!=="all") ? "all" : key;
+      renderGrid();
+      if(activeTopic!=="all"){
+        const el=document.getElementById("group-"+activeTopic);
+        if(el) setTimeout(()=>el.scrollIntoView({behavior:"smooth",block:"start"}),60);
+      }
+    };
+    box.appendChild(b);
+  };
+  mk("all","🌐 Tất cả chủ đề");
+  TOPIC_GROUPS.forEach(g=>{ if(counts[g.key]) mk(g.key, g.icon+" "+g.name); });
+}
+
+function makeCard(it){
+  const card=document.createElement("div"); card.className="card";
+  card.innerHTML=`
+    <div class="thumb" title="Bấm để xem trước">
+      <canvas width="512" height="288"></canvas>
+      <div class="tags"><span class="tag loop">∞ LOOP</span><span class="tag">16:9</span><span class="tag" style="background:linear-gradient(90deg,#6d5cff,#00c2ff)">8K • 120FPS</span>${it.custom?'<span class="tag" style="background:linear-gradient(90deg,#ff9a5a,#ff5a8a)">⭐ CỦA TÔI</span>':''}</div>
+      <div class="play"><span>▶</span></div>
+    </div>
+    <div class="card-body">
+      <h3>${it.name.replace(/</g,"&lt;")}</h3>
+      <p>${(it.desc||"Visual tuỳ biến từ Studio — lặp vô hạn liền mạch, sẵn sàng cho màn LED.").replace(/</g,"&lt;")}</p>
+      <div class="meta"><span>🎞 ${PATTERN_LABEL[it.pattern]||it.pattern}</span><span>⚡ ${it.speed}×</span><span>🎨 ${PALETTES[it.palette]?.name||""}</span></div>
+      <div class="actions">
+        <button class="btn sm act-preview">▶ Xem trước</button>
+        <button class="btn sm ghost act-video">⬇ Video</button>
+        <button class="btn sm ghost act-png">🖼 PNG</button>
+        ${it.custom?'<button class="icon-btn act-del" title="Xoá visual">🗑</button>':''}
+      </div>
+      <div class="progress"><i></i></div>
+    </div>`;
+  registerCanvas(card.querySelector("canvas"), it);
+  card.querySelector(".thumb").onclick = ()=> openPreview(it);
+  card.querySelector(".act-preview").onclick = ()=> openPreview(it);
+  card.querySelector(".act-png").onclick = ()=> downloadPNG(it);
+  card.querySelector(".act-video").onclick = e=> downloadVideo(it, e.target, card.querySelector(".progress"));
+  const del = card.querySelector(".act-del");
+  if(del) del.onclick = ()=>{
+    if(!confirm("Xoá visual “"+it.name+"”?")) return;
+    saved = saved.filter(sv=>sv.id!==it.id); items = items.filter(sv=>sv.id!==it.id);
+    localStorage.setItem("lumina_visuals", JSON.stringify(saved));
+    renderGrid(); updateCount(); toast("🗑 Đã xoá visual.");
+  };
+  return card;
+}
+
 function renderGrid(){
+  renderTopicChips();
   const q = ($("#searchInput").value||"").toLowerCase(), f = $("#filterSelect").value;
   const list = items.filter(it=>{
     const okQ = it.name.toLowerCase().includes(q) || (PATTERN_LABEL[it.pattern]||"").toLowerCase().includes(q);
     const okF = f==="all" || (f==="custom" ? it.custom : it.pattern===f);
-    return okQ && okF;
+    const okT = activeTopic==="all" || topicOf(it)===activeTopic;
+    return okQ && okF && okT;
   });
   grid.innerHTML=""; $("#emptyBox").style.display = list.length? "none":"block";
-  list.forEach(it=>{
-    const card=document.createElement("div"); card.className="card";
-    card.innerHTML=`
-      <div class="thumb" title="Bấm để xem trước">
-        <canvas width="512" height="288"></canvas>
-        <div class="tags"><span class="tag loop">∞ LOOP</span><span class="tag">16:9</span><span class="tag" style="background:linear-gradient(90deg,#6d5cff,#00c2ff)">8K • 120FPS</span>${it.custom?'<span class="tag" style="background:linear-gradient(90deg,#ff9a5a,#ff5a8a)">⭐ CỦA TÔI</span>':''}</div>
-        <div class="play"><span>▶</span></div>
+  TOPIC_GROUPS.forEach(g=>{
+    const groupItems = list.filter(it=> topicOf(it)===g.key);
+    if(!groupItems.length) return;
+    const section=document.createElement("div");
+    section.className="group-section"; section.id="group-"+g.key;
+    const collapsed = collapsedGroups.has(g.key);
+    section.innerHTML=`
+      <div class="group-head">
+        <span class="group-icon">${g.icon}</span>
+        <div><h3>${g.name}</h3><p>${g.desc}</p></div>
+        <span class="group-count">${groupItems.length} visual</span>
+        <span class="group-divider"></span>
+        <button class="group-toggle">${collapsed? "▶ Mở rộng" : "▼ Thu gọn"}</button>
       </div>
-      <div class="card-body">
-        <h3>${it.name.replace(/</g,"&lt;")}</h3>
-        <p>${(it.desc||"Visual tuỳ biến từ Studio — lặp vô hạn liền mạch, sẵn sàng cho màn LED.").replace(/</g,"&lt;")}</p>
-        <div class="meta"><span>🎞 ${PATTERN_LABEL[it.pattern]||it.pattern}</span><span>⚡ ${it.speed}×</span><span>🎨 ${PALETTES[it.palette]?.name||""}</span></div>
-        <div class="actions">
-          <button class="btn sm act-preview">▶ Xem trước</button>
-          <button class="btn sm ghost act-video">⬇ Video</button>
-          <button class="btn sm ghost act-png">🖼 PNG</button>
-          ${it.custom?'<button class="icon-btn act-del" title="Xoá visual">🗑</button>':''}
-        </div>
-        <div class="progress"><i></i></div>
-      </div>`;
-    registerCanvas(card.querySelector("canvas"), it);
-    card.querySelector(".thumb").onclick = ()=> openPreview(it);
-    card.querySelector(".act-preview").onclick = ()=> openPreview(it);
-    card.querySelector(".act-png").onclick = ()=> downloadPNG(it);
-    card.querySelector(".act-video").onclick = e=> downloadVideo(it, e.target, card.querySelector(".progress"));
-    const del = card.querySelector(".act-del");
-    if(del) del.onclick = ()=>{
-      if(!confirm("Xoá visual “"+it.name+"”?")) return;
-      saved = saved.filter(s=>s.id!==it.id); items = items.filter(s=>s.id!==it.id);
-      localStorage.setItem("lumina_visuals", JSON.stringify(saved));
-      renderGrid(); updateCount(); toast("🗑 Đã xoá visual.");
+      <div class="grid group-grid" ${collapsed?'style="display:none"':''}></div>`;
+    const inner=section.querySelector(".group-grid");
+    groupItems.forEach(it=> inner.appendChild(makeCard(it)));
+    section.querySelector(".group-toggle").onclick=e=>{
+      if(collapsedGroups.has(g.key)) collapsedGroups.delete(g.key); else collapsedGroups.add(g.key);
+      renderGrid();
     };
-    grid.appendChild(card);
+    grid.appendChild(section);
   });
 }
-$("#reloadVisualBtn").onclick = ()=>{
-  // Tải lại toàn bộ: dựng lại thẻ, đặt lại pha chuyển động lệch nhau cho khỏi đồng loạt gây khựng
-  liveCanvases.forEach(v=>{ v.vt = Math.random()*12; v.lastDraw = 0; });
-  renderGrid();
-  const st = liveCanvases.get($("#stageCanvas")); if(st) st.vt = 0;
-  toast("↻ Đã tải lại toàn bộ visual & tối ưu khung hình (thumbnail "+(1000/thumbInterval).toFixed(0)+"fps thích ứng)!");
-};
+
 $("#searchInput").addEventListener("input", renderGrid);
 $("#filterSelect").addEventListener("change", renderGrid);
 renderGrid(); updateCount();
@@ -3131,5 +3222,5 @@ $("#stageVideoBtn").onclick = e=> downloadVideo(stageItem(), e.target, $("#dlPro
 $("#stagePngBtn").onclick = ()=> downloadPNG(stageItem());
 
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a61773a41926c8c3',t:'MTc5NTg0ODc2Ng=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a61773a41926c8c3',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a6177a0e2c11a880',t:'MTc5NTg0OTAyOA=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a6177a0e2c11a880',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
